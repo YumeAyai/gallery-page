@@ -41,10 +41,11 @@ const adjustContainerWidth = () => {
 };
 
 const generateGallery = () => {
-  var gallery = document.querySelector(".gallery");
-  var gridTemplateColumns = getComputedStyle(gallery).gridTemplateColumns;
-  var columnWidths = gridTemplateColumns.split(" ");
-  var columnCount = columnWidths.length;
+  const gallery = document.querySelector(".gallery");
+  const gridTemplateColumns = getComputedStyle(gallery).gridTemplateColumns;
+  const columnWidths = gridTemplateColumns.split(" ");
+  const columnCount = columnWidths.length;
+  console.log(gallery, gridTemplateColumns, columnWidths, columnCount);
   const columnIds = new Map();
   for (let i = 0; i < columnCount; i++) {
     const col = document.createElement("div");
@@ -61,6 +62,7 @@ const generateGallery = () => {
   displayedPhotos.value = Object.values(photosContext).map(
     (photo) => photo.default
   );
+
   var minValue = 0;
   var minKey = "col0";
   displayedPhotos.value.forEach((photoPath, index) => {
@@ -73,14 +75,17 @@ const generateGallery = () => {
     img.alt = "Photo " + (index + 1);
     img.setAttribute(gallery.attributes[0].name, "");
     img.className = "gallery__img";
+    let imgheight = 0;
+    img.onload = () => {
+      imgheight =
+        (parseFloat(columnWidths[0]) / img.naturalWidth) * img.naturalHeight;
+    };
     img.onclick = function (event) {
       showImagePreview(event, photoPath);
     };
 
     galleryItem.appendChild(img);
 
-    var columnWidth = parseFloat(columnWidths[0]);
-    var imgheight = (columnWidth / img.width) * img.height;
     var gap = parseFloat(getComputedStyle(gallery).getPropertyValue("row-gap"));
     document.getElementById(minKey).appendChild(galleryItem);
     minValue += imgheight + gap;

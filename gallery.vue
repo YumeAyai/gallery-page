@@ -1,12 +1,5 @@
 <script setup>
-import {
-  ref,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-  getCurrentInstance,
-  toRef,
-} from "vue";
+import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 
 const displayedPhotos = ref([]);
 

@@ -45,7 +45,6 @@ const generateGallery = () => {
   const gridTemplateColumns = getComputedStyle(gallery).gridTemplateColumns;
   const columnWidths = gridTemplateColumns.split(" ");
   const columnCount = columnWidths.length;
-  console.log(gallery, gridTemplateColumns, columnWidths, columnCount);
   const columnIds = new Map();
   for (let i = 0; i < columnCount; i++) {
     const col = document.createElement("div");

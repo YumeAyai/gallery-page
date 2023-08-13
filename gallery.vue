@@ -24,20 +24,16 @@ const hideImagePreview = () => {
   isPreviewVisible.value = false;
 };
 
-const adjustContainerWidth = () => {
-  const imagePreview = document.getElementById("imagePreview");
-  const previewImage = document.getElementById("previewImage");
-
-  if (imagePreview && previewImage) {
-    if (previewImage.naturalHeight > imagePreview.clientHeight) {
-      imagePreview.style.width = `${
-        (imagePreview.clientHeight / previewImage.naturalHeight) *
-        previewImage.naturalWidth
-      }px`;
-    } else {
-      imagePreview.style.width = "auto";
-    }
-  }
+const loadImages = () => {
+  return Object.keys(
+    import.meta.glob("@/assets/photos/*.{png,jpg,jpeg,gif,svg}", {
+      eager: true,
+    })
+  ).map((imagePath) => {
+    const image = new Image();
+    image.src = imagePath;
+    return image;
+  });
 };
 
 const generateGallery = () => {
@@ -54,33 +50,21 @@ const generateGallery = () => {
     columnIds.set("col" + i, 0);
     gallery.appendChild(col);
   }
-
-  const photosContext = import.meta.globEager(
-    "@/assets/photos/*.{png,jpg,jpeg,gif,svg}"
-  );
-  displayedPhotos.value = Object.values(photosContext).map(
-    (photo) => photo.default
-  );
-
   var minValue = 0;
   var minKey = "col0";
-  displayedPhotos.value.forEach((photoPath, index) => {
+  loadImages().forEach((img, index) => {
     const galleryItem = document.createElement("div");
     galleryItem.setAttribute(gallery.attributes[0].name, "");
     galleryItem.className = "gallery__item";
 
-    const img = document.createElement("img");
-    img.src = photoPath;
     img.alt = "Photo " + (index + 1);
     img.setAttribute(gallery.attributes[0].name, "");
     img.className = "gallery__img";
-    let imgheight = 0;
-    img.onload = () => {
-      imgheight =
-        (parseFloat(columnWidths[0]) / img.naturalWidth) * img.naturalHeight;
-    };
+    let imgheight =
+      (parseFloat(columnWidths[0]) / img.naturalWidth) * img.naturalHeight;
+
     img.onclick = function (event) {
-      showImagePreview(event, photoPath);
+      showImagePreview(event, img.src);
     };
 
     galleryItem.appendChild(img);
@@ -102,11 +86,9 @@ const generateGallery = () => {
 onMounted(async () => {
   generateGallery();
   window.addEventListener("resize", handleResize);
-  window.addEventListener("resize", adjustContainerWidth);
 });
 onBeforeUnmount(() => {
   window.removeEventListener("resize", handleResize);
-  window.removeEventListener("resize", adjustContainerWidth);
 });
 watch(windowWidth, () => {
   const gallery = document.querySelector(".gallery");
